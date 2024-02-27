@@ -1,6 +1,6 @@
 export interface USER {
     name: string,
     email: string,
-    address: string,
-    coordinates: string,
+    address?: string,
+    coordinates: [number, number],
 }

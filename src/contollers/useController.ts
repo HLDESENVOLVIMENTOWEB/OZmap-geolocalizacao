@@ -15,7 +15,7 @@ const createUser = async (req: Request, res: Response) => {
 
     let finalCoordinates = coordinates;
     if (address && !coordinates) {
-      const geoResponse = await geocoder.geocode(address);
+      const geoResponse = await geocoder.geocode(address); 
       if (geoResponse.length > 0) {
         finalCoordinates = { lat: Number(geoResponse[0].latitude), lng: Number(geoResponse[0].longitude) };
       } else {

@@ -11,11 +11,17 @@ import { Region } from './regionModal';
     const region = this as Omit<any, keyof User> & User;
 
     if (region.isModified('coordinates')) {
-      region.address = await lib.getAddressFromCoordinates(region.coordinates);
+      const address = await lib.getAddressFromCoordinates(region.coordinates);
+      if (address === undefined) {
+        throw new Error('Endereço não encontrado para as coordenadas fornecidas.');
+      } else {
+        region.address = address;
+      }
     } else if (region.isModified('address')) {
       const { lat, lng } = await lib.getCoordinatesFromAddress(region.address);
-      region.coordinates = [lng, lat];
+      region.coordinates = [lng, lat]; 
     }
+    
 
     next();
   } catch (error) {
@@ -30,7 +36,7 @@ export class User  extends Base {
     @prop({ required: true })
     email!: string;
   
-    @prop({ required: true })
+    @prop({ required: false })
     address: string;
   
     @prop({ required: true, type: () => [Number] })
