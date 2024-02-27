@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import * as mongoose from 'mongoose';
 import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
 import { pre, getModelForClass, Prop, Ref, modelOptions } from '@typegoose/typegoose';
-import lib from './lib';
+import lib from '../lib';
 
 import ObjectId = mongoose.Types.ObjectId;
 
@@ -51,11 +51,18 @@ export class User extends Base {
 
   if (region.isNew) {
     const user = await UserModel.findOne({ _id: region.user });
-    user.regions.push(region._id);
-    await user.save({ session: region.$session() });
+    if (!user) {
+      // Trate o caso em que o usuário não é encontrado.
+      // Por exemplo, você pode lançar um erro ou simplesmente retornar para interromper a execução.
+      throw new Error('User not found');
+      // Ou `return next(new Error('User not found'));` se você quiser passar o erro para o próximo middleware
+    } else {
+      user.regions.push(region._id);
+      await user.save({ session: region.$session() });
+    }
   }
 
-  next(region.validateSync());
+  next();
 })
 @modelOptions({ schemaOptions: { validateBeforeSave: false } })
 export class Region extends Base {
