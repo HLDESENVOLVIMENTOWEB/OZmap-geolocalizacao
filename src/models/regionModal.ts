@@ -35,7 +35,7 @@ export class Region extends Base {
   @Prop({ required: true })
   name!: string;
 
-  @Prop({ ref: () => User, required: true, type: () => String })
+  @Prop({ ref: 'User', required: true, type: () => String })
   user: Ref<User>;
 }
 
