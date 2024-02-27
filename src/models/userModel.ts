@@ -1,45 +1,44 @@
 import 'reflect-metadata';
 
 import * as mongoose from 'mongoose';
-import { TimeStamps } from '@typegoose/typegoose/lib/defaultClasses';
-import { pre, getModelForClass, Prop, Ref, modelOptions } from '@typegoose/typegoose';
+import {  Prop, Ref, getModelForClass, modelOptions, pre, prop} from '@typegoose/typegoose';
 import lib from '../lib';
 
 import ObjectId = mongoose.Types.ObjectId;
-
-class Base extends TimeStamps {
-  @Prop({ required: true, default: () => (new ObjectId()).toString() })
-  _id: string;
-}
+import { Base } from '../types/Base';
 
 @pre<User>('save', async function (next) {
-  const region = this as Omit<any, keyof User> & User;
+  try {
+    const region = this as Omit<any, keyof User> & User;
 
-  if (region.isModified('coordinates')) {
-    region.address = await lib.getAddressFromCoordinates(region.coordinates);
-  } else if (region.isModified('address')) {
-    const { lat, lng } = await lib.getCoordinatesFromAddress(region.address);
+    if (region.isModified('coordinates')) {
+      region.address = await lib.getAddressFromCoordinates(region.coordinates);
+    } else if (region.isModified('address')) {
+      const { lat, lng } = await lib.getCoordinatesFromAddress(region.address);
+      region.coordinates = [lng, lat];
+    }
 
-    region.coordinates = [lng, lat];
-  }
-
-  next();
+    next();
+  } catch (error) {
+    const errorMessage = (error instanceof Error) ? error.message : 'An unknown error occurred';
+    throw new Error(errorMessage);
+  }  
 })
-export class User extends Base {
-  @Prop({ required: true })
-  name!: string;
-
-  @Prop({ required: true })
-  email!: string;
-
-  @Prop({ required: true })
-  address: string;
-
-  @Prop({ required: true, type: () => [Number] })
-  coordinates: [number, number];
-
-  @Prop({ required: true, default: [], ref: () => Region, type: () => String })
-  regions: Ref<Region>[];
+class User  extends Base {
+  @prop({ required: true })
+    name!: string;
+  
+    @prop({ required: true })
+    email!: string;
+  
+    @prop({ required: true })
+    address: string;
+  
+    @prop({ required: true, type: () => [Number] })
+    coordinates: [number, number];
+  
+    @prop({ required: true, default: [], ref: () => Region, type: () => String })
+    regions: Ref<Region>[];
 }
 
 @pre<Region>('save', async function (next) {
@@ -52,10 +51,7 @@ export class User extends Base {
   if (region.isNew) {
     const user = await UserModel.findOne({ _id: region.user });
     if (!user) {
-      // Trate o caso em que o usuário não é encontrado.
-      // Por exemplo, você pode lançar um erro ou simplesmente retornar para interromper a execução.
       throw new Error('User not found');
-      // Ou `return next(new Error('User not found'));` se você quiser passar o erro para o próximo middleware
     } else {
       user.regions.push(region._id);
       await user.save({ session: region.$session() });
@@ -75,6 +71,7 @@ export class Region extends Base {
   @Prop({ ref: () => User, required: true, type: () => String })
   user: Ref<User>;
 }
+
 
 export const UserModel = getModelForClass(User);
 export const RegionModel = getModelForClass(Region);
