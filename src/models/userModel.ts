@@ -30,8 +30,8 @@ import { Region } from './regionModal';
   }  
 })
 export class User  extends Base {
-  @prop({ required: true })
-    name!: string;
+     @prop({ required: true })
+     public name!: string;
   
     @prop({ required: true })
     email!: string;
