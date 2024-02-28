@@ -1,5 +1,53 @@
 # OZmap Challenge: Construindo a Geolocalização do Futuro
 
+## 🌍 **Como rodar**
+
+## 🌍 **Como rodar**
+
+Iniciar os Serviços com Docker
+
+## Pré-requisitos
+
+- Docker
+- Node.js (versão 20 ou superior)
+
+## Configuração do Ambiente
+
+### Iniciar os Serviços com Docker
+
+1. Abra o terminal.
+2. Navegue até a raiz do projeto.
+3. Execute o comando:
+   
+  ```json
+   docker-compose up -d
+  ```
+
+### Instalar Dependências
+
+Na raiz do projeto, execute o comando abaixo para instalar as dependências necessárias:
+
+
+  ```json
+  npm install
+  ```
+
+### Executar o Projeto
+
+Para iniciar o projeto em modo de desenvolvimento, execute:
+
+  ```json
+  npm dev
+  ```
+
+  ### Swagger
+
+Após iniciar o projeto, a documentação Swagger estará disponível no endpoint /api-docs.
+
+
+
+
+
 Olá desenvolvedor(a)! Bem-vindo(a) ao Desafio Técnico do OZmap. Este é um projeto que simula um cenário real de nossa empresa, onde você irá desempenhar um papel crucial ao desenvolver uma API RESTful robusta para gerenciar usuários e localizações. Estamos muito animados para ver sua abordagem e solução!
 
 ## 🌍 **Visão Geral**
