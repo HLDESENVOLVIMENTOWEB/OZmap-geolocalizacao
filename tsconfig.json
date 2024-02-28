@@ -3,8 +3,8 @@
     "module": "commonjs",
     "target": "es2020",
     "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true, 
+    // "rootDir": "./src", // This line is commented out or removed
+    "strict": true,
     "esModuleInterop": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -14,9 +14,8 @@
   },
   "types": ["reflect-metadata", "mocha"],
   "include": [
-    "src/**/*" 
+    "src/**/*",
+    "swaggerConfig.ts"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }
