@@ -2,8 +2,7 @@ import { UserModel } from '../models/userModel';
 import { USER } from '../types/User';
 
 const createUser = async (userData: USER) => {
-  const user = new UserModel(userData);
-  await user.save();
+  const user = await UserModel.create(userData);
   return user;
 };
 
