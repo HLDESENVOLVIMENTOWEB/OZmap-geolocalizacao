@@ -5,7 +5,7 @@ import userRoutes from './routes/userRoutes';
 import regiaoRoutes from './routes/regiaoRoutes'; 
 
 const app: Express = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3002;
 
 app.use(bodyParser.json());
 
