@@ -1,16 +1,22 @@
 import { Request, Response } from 'express';
 import * as regionService from '../services/regiaoService';
+import { STATUS } from '../types/Status';
+
+import { winstonLogger } from '../logger';
 
 export const createRegion = async (req: Request, res: Response): Promise<void> => {
   try {
     const regionData = req.body;
     const region = await regionService.createRegion(regionData);
-    res.status(201).json(region);
+    winstonLogger.debug(region);
+    res.status(STATUS.CREATED).json(region);
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+      winstonLogger.error(error.message);
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
     } else {
-      res.status(500).json({ message: 'Server error' });
+      winstonLogger.error(STATUS.INTERNAL_SERVER_ERROR+' An unknown error occurred.');
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'An unknown error occurred' });
     }
   }
 };
@@ -20,15 +26,19 @@ export const getRegionById = async (req: Request, res: Response): Promise<void> 
     const { id } = req.params;
     const region = await regionService.getRegionById(id);
     if (!region) {
-      res.status(404).json({ message: 'Region not found' });
+      winstonLogger.info(STATUS.NOT_FOUND+' Region not found.');
+      res.status(STATUS.NOT_FOUND).json({ message: 'Region not found' });
       return;
     }
-    res.json(region);
+    winstonLogger.debug(region);
+    res.status(STATUS.CREATED).json(region);
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+      winstonLogger.error(error.message);
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
     } else {
-      res.status(500).json({ message: 'Server error' });
+      winstonLogger.error('An unknown error occurred');
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'An unknown error occurred' });
     }
   }
 };
@@ -39,15 +49,19 @@ export const updateRegionById = async (req: Request, res: Response): Promise<voi
     const updateData = req.body;
     const updatedRegion = await regionService.updateRegionById(id, updateData);
     if (!updatedRegion) {
-      res.status(404).json({ message: 'Region not found' });
+      winstonLogger.info(STATUS.NOT_FOUND+' Region not found.');
+      res.status(STATUS.NOT_FOUND).json({ message: 'Region not found' });
       return;
     }
-    res.json(updatedRegion);
+    winstonLogger.debug(updatedRegion);
+    res.status(STATUS.UPDATED).json({ message: updatedRegion });
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+      winstonLogger.error(error.message);
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
     } else {
-      res.status(500).json({ message: 'Server error' });
+      winstonLogger.error('An unknown error occurred');
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'An unknown error occurred' });
     }
   }
 };
@@ -57,15 +71,19 @@ export const deleteRegionById = async (req: Request, res: Response): Promise<voi
     const { id } = req.params;
     const result = await regionService.deleteRegionById(id);
     if (!result) {
-      res.status(404).json({ message: 'Region not found' });
+      winstonLogger.info(STATUS.NOT_FOUND+' Region not found.');
+      res.status(STATUS.NOT_FOUND).json({ message: 'Region not found' });
       return;
     }
-    res.status(204).send(); 
+    winstonLogger.debug(result);
+    res.status(STATUS.OK).json({});
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+      winstonLogger.error(error.message);
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
     } else {
-      res.status(500).json({ message: 'Server error' });
+      winstonLogger.error('An unknown error occurredr');
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'An unknown error occurred' });
     }
   }
 };
@@ -73,12 +91,15 @@ export const deleteRegionById = async (req: Request, res: Response): Promise<voi
 export const listRegions = async (req: Request, res: Response): Promise<void> => {
   try {
     const regions = await regionService.listRegions();
-    res.json(regions);
+    winstonLogger.debug(regions);
+    res.status(STATUS.OK).json(regions);
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+      winstonLogger.error(error.message);
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
     } else {
-      res.status(500).json({ message: 'Server error' });
+      winstonLogger.error('Server error');
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Server error' });
     }
   }
 };
@@ -87,12 +108,15 @@ export const listRegionsContainingPoint = async (req: Request, res: Response): P
   try {
     const point = req.body.point; 
     const regions = await regionService.findRegionsContainingPoint(point);
-    res.json(regions);
+    winstonLogger.debug(regions);
+    res.status(STATUS.OK).json(regions);
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+      winstonLogger.error(error.message);
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
     } else {
-      res.status(500).json({ message: 'Server error' });
+      winstonLogger.error('Server error');
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Server error' });
     }
   }
 };
@@ -101,12 +125,15 @@ export const listRegionsNearPoint = async (req: Request, res: Response): Promise
   try {
     const { point, distance } = req.body; 
     const regions = await regionService.findRegionsNearPoint(point, distance);
-    res.json(regions);
+    winstonLogger.debug(regions);
+    res.status(STATUS.OK).json(regions);
   } catch (error) {
     if (error instanceof Error) {
-      res.status(500).json({ message: error.message });
+      winstonLogger.error(error.message);
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: error.message });
     } else {
-      res.status(500).json({ message: 'Server error' });
+      winstonLogger.error('Server error');
+      res.status(STATUS.INTERNAL_SERVER_ERROR).json({ message: 'Server error' });
     }
   }
 };
