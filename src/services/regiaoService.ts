@@ -1,11 +1,9 @@
-import { RegionModel } from '../models/regionModal'; 
-import { Region } from '../types/Regiao'; 
-
+import { Region } from '../models/regionModal';
+import { RegionModel } from '../models/regionModal'; // Corrigindo o nome do modelo
 
 export const createRegion = async (regionData: Region): Promise<Region> => {
-  const region = new RegionModel(regionData);
-  await region.save();
-  return region.toObject(); 
+  const region = await RegionModel.create(regionData);
+  return region;
 };
 
 export const getRegionById = async (id: string): Promise<Region | null> => {
@@ -14,9 +12,9 @@ export const getRegionById = async (id: string): Promise<Region | null> => {
   
   const adjustedRegion: Region = {
     ...region,
-    _id: region._id.toString(), 
+    _id: region._id.toString(),
   };
-  delete (adjustedRegion as any)._id; 
+  delete (adjustedRegion as any)._id;
   return adjustedRegion;
 };
 
@@ -27,7 +25,7 @@ export const updateRegionById = async (id: string, regionData: Partial<Region>):
 
 export const deleteRegionById = async (id: string): Promise<boolean> => {
   const result = await RegionModel.findByIdAndDelete(id);
-  return !!result; 
+  return !!result;
 };
 
 export const listRegions = async (): Promise<Region[]> => {
